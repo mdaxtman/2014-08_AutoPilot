@@ -10,7 +10,7 @@ var inputGlobal = "";
 //handle click event to hand off to GET request
 $("#player").ready(function(){
   var query;
-  $("button").on("click", function(){
+  $("#submission").on("click", function(){
     refreshPlayer();
     query = $("#search").val();
     $("#search").val("");
@@ -23,7 +23,7 @@ $("#player").ready(function(){
 //removes old player and refreshes with new div to convert to iframe
 var refreshPlayer = function(){
   $("#player").remove();
-  $("body").append("<div id=player></div>");
+  $(".display").prepend("<div id=player></div>");
 };
 
 
@@ -81,6 +81,8 @@ var video = function(ID, duration){
       }
     });
   }
+  // setTimeout(function(){ console.log(player);},10000);
+  // setTimeout(function(){ console.log(player);},5000);
   function onPlayerReady(event) {
     event.target.playVideo();
   }
@@ -90,6 +92,7 @@ var video = function(ID, duration){
       getRequest(inputGlobal);
     }
     if(event.data === 2){
+      console.log("paused");
       player.playVideo();
     }
   }
