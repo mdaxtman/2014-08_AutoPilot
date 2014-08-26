@@ -1,50 +1,80 @@
+//initialize iframe
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+//closure variable for access to other functions of user input
+var inputGlobal = "";
 
-
+//handle click event to hand off to GET request
 $("#player").ready(function(){
   var query;
   $("button").on("click", function(){
-    //$("#player").remove();
+    refreshPlayer();
     query = $("#search").val();
     $("#search").val("");
     query = query.split(" ").join("+");
-    $.ajax({
-      url: "https://gdata.youtube.com/feeds/api/videos?q="+query,
-      type: "GET",
-      data: {
-        orderby: "relevance",
-        v: "2",
-        alt: "jsonc",
-        limit: "5",
-        license: "cc",
-        duration: "long",
-        "max-results": "50"
-      },
-      contentType: "application/json",
-      success: function(response){
-          var len = response.data.items.length;
-          console.log(len);
-          var num = Math.floor(Math.random() * len);
-          console.log(num);
-          var object = response.data.items[num];
-        setTimeout(function(){video(object.id);}, 100);
-      }
-    });
+    inputGlobal = query;
+    getRequest(query);
   });
 });
-                
 
-var video = function(ID){
+//removes old player and refreshes with new div to convert to iframe
+var refreshPlayer = function(){
+  $("#player").remove();
+  $("body").append("<div id=player></div>");
+};
+
+
+//value of input sent in query                
+var getRequest = function(input){
+  $.ajax({
+    url: "https://gdata.youtube.com/feeds/api/videos?q="+input,
+    type: "GET",
+    data: {
+      orderby: "relevance",
+      v: "2",
+      alt: "jsonc",
+      license: "cc",
+      duration: "long",
+      "max-results": "50"
+    },
+    contentType: "application/json",
+    success: function(response){
+      //response forwarded to create a new player instance
+      if(response.data.items){
+        var len = response.data.items.length;
+        var num = Math.floor(Math.random() * len);
+        var ResponseObject = response.data.items[num];
+        video(ResponseObject.id, ResponseObject.duration);
+      }else{
+        alert("there are no videos for your search query");
+      }
+    },
+    error: function(obj, error){
+      console.log(error);
+    }
+  });
+};
+
+//new player instance created with random response ID
+var video = function(ID, duration){
   var player;
+  var startTime = Math.floor(Math.random() * duration);
+  console.log(startTime, duration);
   function onYouTubeIframeAPIReady() {  
     player = new YT.Player('player', {
       height: '390',
       width: '640',
       videoId: ID,
+      playerVars: {
+        start: startTime,
+        controls: '0',
+        modestbranding: '1',
+        showinfo: '0',
+        rel: '0'
+      },
       events: {
         'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
@@ -54,14 +84,13 @@ var video = function(ID){
   function onPlayerReady(event) {
     event.target.playVideo();
   }
-  var done = false;
   function onPlayerStateChange(event) {
     if(event.data === 0){
-      console.log("ended");
+      refreshPlayer();
+      getRequest(inputGlobal);
     }
     if(event.data === 2){
-      console.log("paused");
-      //onYouTubeIframeAPIReady("4z56JFMueFY");
+      player.playVideo();
     }
   }
   function stopVideo() {
@@ -71,44 +100,25 @@ var video = function(ID){
 };
 
 
-
-
-
-//*********************************************
-// $("document").ready(function(){
-//   var defer = $.Deferred();
-//   var tag; 
-//   defer.resolve(function(){
-//   tag = $("head").append("<script src='https://www.youtube.com/iframe_api'></script>");
-//   });
-
-//   defer.then(function(){
-//     var player;
-//     function onYouTubeIframeAPIReady() {
-//       console.log("hi");
-//       player = new YT.Player('player', {
-//         height: '390',
-//         width: '640',
-//         videoId: 'M7lc1UVf-VE',
-//         events: {
-//           'onReady': onPlayerReady,
-//           'onStateChange': onPlayerStateChange
-//         }
-//       });
-//     }
-//     
-//     function onPlayerReady(event) {
-//       event.target.playVideo();
-//     }
-//     var done = false;
-//       function onPlayerStateChange(event) {
-//         if (event.data == YT.PlayerState.PLAYING && !done) {
-//           setTimeout(stopVideo, 6000);
-//           done = true;
-//         }
-//       }
-//       function stopVideo() {
-//         player.stopVideo();
-//       }
-//   });
-// });
+// 1 – Action & Adventure
+// 2 – Animation & Cartoons
+// 3 – Classic TV
+// 4 – Comedy
+// 5 – Drama
+// 6 – Home & Garden
+// 7 – News
+// 8 – Reality & Game Shows
+// 9 – Science & Tech
+// 10 – Science Fiction
+// 11 – Soaps
+// 13 – Sports
+// 14 – Travel
+// 16 – Entertainment
+// 17 – Documentary
+// 20 – Nature
+// 21 – Beauty & Fashion
+// 23 – Food
+// 24 – Gaming
+// 25 – Health & Fitness
+// 26 – Learning & Education
+// 27 – Foreign Language
