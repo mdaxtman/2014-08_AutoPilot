@@ -5,18 +5,85 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 //closure variable for access to other functions of user input
-var inputGlobal = "";
+var inputGlobal;
+//number associated with genre type
+var genre = 1;
 
-//handle click event to hand off to GET request
+
+//jquery event handlers
 $("#player").ready(function(){
+//channel up button
+  $("#up").on("click", function(){
+    if(inputGlobal){
+      genre++;
+      if(genre > 28){
+        genre = 1;
+      }
+      if(genre === 12){
+        genre = 13;
+      }
+      if(genre === 15){
+        genre = 16;
+      }
+      if(genre === 18 || genre === 19){
+        genre = 20;
+      }
+      if(genre === 22){
+        genre = 23;
+      }
+      if(genre === 28){
+        refreshPlayer();
+        video("kxopViU98Xo", 36000);
+      }else{
+        refreshPlayer();
+        getRequest(inputGlobal, genre);
+      }
+    }  
+  });
+//channel down button
+  $("#down").on("click", function(){
+    if(inputGlobal){
+      genre--;
+      if(genre < 1){
+        genre = 28;
+      }
+      if(genre === 12){
+        genre = 11;
+      }
+      if(genre === 15){
+        genre = 14;
+      }
+      if(genre === 18 || genre === 19){
+        genre = 17;
+      }
+      if(genre == 22){
+        genre = 21;
+      }
+      if(genre === 28){
+        console.log(genre);
+        refreshPlayer();
+        video("kxopViU98Xo", 36000);
+      }else{
+        refreshPlayer();
+        getRequest(inputGlobal, genre);
+      }
+    }  
+  });
+//handle submission to hand off to GET request
   var query;
   $("#submission").on("click", function(){
+    genre = 1;
     refreshPlayer();
     query = $("#search").val();
     $("#search").val("");
     query = query.split(" ").join("+");
-    inputGlobal = query;
-    getRequest(query);
+    if(query.length){
+      inputGlobal = query;
+      getRequest(query, genre);
+    }else{
+      alert("please enter a topic or subject");
+      location.reload();
+    }
   });
 });
 
@@ -28,7 +95,8 @@ var refreshPlayer = function(){
 
 
 //value of input sent in query                
-var getRequest = function(input){
+var getRequest = function(input, channel){
+  channel = JSON.stringify(channel);
   $.ajax({
     url: "https://gdata.youtube.com/feeds/api/videos?q="+input,
     type: "GET",
@@ -36,9 +104,10 @@ var getRequest = function(input){
       orderby: "relevance",
       v: "2",
       alt: "jsonc",
-      license: "cc",
+      license: "cc",  
       duration: "long",
-      "max-results": "50"
+      "max-results": "50",
+      genre: channel
     },
     contentType: "application/json",
     success: function(response){
@@ -58,11 +127,10 @@ var getRequest = function(input){
   });
 };
 
-//new player instance created with random response ID
+//new player instance created with random response ID, genre and
 var video = function(ID, duration){
   var player;
   var startTime = Math.floor(Math.random() * duration);
-  console.log(startTime, duration);
   function onYouTubeIframeAPIReady() {  
     player = new YT.Player('player', {
       height: '390',
@@ -81,8 +149,6 @@ var video = function(ID, duration){
       }
     });
   }
-  // setTimeout(function(){ console.log(player);},10000);
-  // setTimeout(function(){ console.log(player);},5000);
   function onPlayerReady(event) {
     event.target.playVideo();
   }

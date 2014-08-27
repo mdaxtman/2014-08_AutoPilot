@@ -11,7 +11,23 @@ body{
 }
 
 #remote {
+  background-image: url("../img/remote.jpg");
   float: right;
+  margin-right: 200px;
+}
+
+#down {
+  margin-top: -4px;
+}
+
+.buttons {
+  opacity: 0%;
+  display: block;
+  color: black;
+  background-color: black;
+  margin-top: 214px;
+  width: 55px;
+  margin-left: 350px;
 }
 
 .container{

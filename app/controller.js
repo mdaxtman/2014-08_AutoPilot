@@ -5,8 +5,8 @@ channelApp.controller("channelController", function($scope){
   $scope.current = "";
   $scope.counter = 0;
   $scope.channelList = [
-    "Channel 01 - Action & Adventure",
-    "Channel 02 - Animation & Cartoons",
+    "Channel 01 - Action & Adventure", //food?
+    "Channel 02 - Animation & Cartoons", //foreign Language?
     "Channel 03 - Classic TV",
     "Channel 04 - Comedy",
     "Channel 05 - Drama",
@@ -23,13 +23,15 @@ channelApp.controller("channelController", function($scope){
     "Channel 16 - Nature",
     "Channel 17 - Beauty & Fashion",
     "Channel 18 - Food",
-    "Channel 19 - Gaming",
-    "Channel 20 - Health & Fitness",
+    "Channel 19 - Gaming", //science and Tech
+    "Channel 20 - Health & Fitness", //foreign language
     "Channel 21 - Learning & Education",
-    "Channel 22 - Foreign Language"
+    "Channel 22 - Foreign Language",
+    "Channel 23 - Epic Sax Guy, All the Time"
   ];
   $scope.channelOne = function(){
     $scope.current = $scope.channelList[0];
+    $scope.counter = 0;
     loaded = true;
   };
   $scope.channelUp = function(){
