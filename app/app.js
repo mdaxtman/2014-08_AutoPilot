@@ -127,7 +127,7 @@ var getRequest = function(input, channel){
   });
 };
 
-//new player instance created with random response ID, genre and
+//new player instance created with random response ID, genre and start time
 var video = function(ID, duration){
   var player;
   var startTime = Math.floor(Math.random() * duration);
